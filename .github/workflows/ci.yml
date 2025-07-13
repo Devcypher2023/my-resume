@@ -1,6 +1,6 @@
 name: Resume ci Build
 
-on:                       #when ever someone push to branch main trigger a build  no need for docker build alos for pull request
+on:                       #when ever someone push to branch main trigger a build  no need for docker build also for pull request
   push:
     branches: [ "main" ]
   pull_request:
