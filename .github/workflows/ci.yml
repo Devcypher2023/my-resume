@@ -6,16 +6,16 @@ on:                       #when ever someone push to branch main trigger a build
   pull_request:
     branches: [ "main" ]
 
-jobs:
+jobs:                    #set of steps
 
-  build:
+  build:                 #build is a job with
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest     # its a runner but also know as a share runner compute enviroment on where command will run
 
-    steps:
-    - uses: actions/checkout@v4
+    steps:                     #use to declare the commands  you want to run, 
+    - uses: actions/checkout@v4   #action that is used to run a command git clone, its a prebuilt code
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:${{github.run_number}}
+      run: docker build . --file Dockerfile --tag my-image-name:${{github.run_number}}  #shell command
     - name: Build latest
       run: docker build . --file Dockerfile --tag my-image-name
     - name: Login to Docker hub
@@ -25,12 +25,12 @@ jobs:
     - name: Push Image
       run: docker push ${{secrets.REGISTRY_USERNAME}}/my-image-name:${{github.run_number}}
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+  deploy:            # deploy is a job
+    needs: build      # this tells it to wait for build job before running otherwise it will run in parallel, makes it depenent
+    runs-on: ubuntu-latest     #this is a runner as well a shared one
     steps: 
       - name: SSH to server
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.0.3  #this is a action as well, use mean you are using a chicken
         with:
           host: ${{secrets.HOST}}
           username: ${{vars.USERNAME}}
