@@ -13,6 +13,8 @@ permissions:
 env:
   AWS_REGION: us-east-1
   AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }}   #secret created in github that holds arn
+  ECR_REPO_NAME: dev
+  IMAGE_TAG: ${{github.run_number}}
 
 
 jobs:
@@ -30,3 +32,10 @@ jobs:
 
       - name: Login into ecr
         uses: aws-actions/amazon-ecr-login@v1
+        id: ecr-login   # the meta data of the taks is stored in id its like a variable 
+
+      - name: Build tag and push image
+        id: build-and-push
+        run: |   # use pipe if running multipule commands
+            docker build -t $${{ steps.ecr-login.output.registry }}/${{ env.ECR_REPO_NAME}}:${{env.IMAGE_TAG}} .
+            docker push $${{ steps.ecr-login.output.registry }}/${{ env.ECR_REPO_NAME}}:${{env.IMAGE_TAG}}
