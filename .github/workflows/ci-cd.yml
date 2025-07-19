@@ -33,6 +33,15 @@ jobs:
       - name: Login into ecr
         uses: aws-actions/amazon-ecr-login@v1
         id: ecr-login   # the meta data of the taks is stored in id its like a variable 
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"  # Scans filesystem (repo)
+          format: "table"  # Output format (table, json, sarif)
+          exit-code: "0"   # Fails if vulnerabilities found
+          severity: "CRITICAL,HIGH"  # Only fail on critical/high
+          ignore-unfixed: true  # Ignore unfixed vulnerabilities
 
       - name: Build tag
         id: build-and-push
