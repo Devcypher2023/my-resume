@@ -1,0 +1,26 @@
+name: build push and deploy image
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }}   #secret created in github that holds arn
+
+
+  jobs:
+    build:
+      runs-on: ubuntu-latest               # its a runner but also know as a share runner (git hub runner) compute enviroment on where command will run, we are setting the enivroment
+      steps:
+        - name: clone repo
+        - uses: actions/checkout@v3        # its an action that runs a command
+        - name: Aws creds config
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            role-to-assume: ${{ env.AWS_ROLE}}               # we are using OIDC, instead of secret and acess keys, 
+            aws-region: ${{ env.AWS_REGION}}
+        - name: Login into ecr
+          uses: aws-actions/amazon-ecr-login@v1
